@@ -7,8 +7,14 @@
     ]
   },
   "rules": {
+    "no-console": [
+      false,
+      "dir",
+      "log",
+      "error",
+      "warn"
+    ],
     "ordered-imports": false,
-    "no-console": false,
     "object-literal-sort-keys": false
   }
 }
