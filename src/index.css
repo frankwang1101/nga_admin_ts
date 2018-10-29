@@ -13,3 +13,19 @@ body {
 .query-input{
   width: 120px;
 }
+
+.search .search-block{
+  margin-right: 16px;
+}
+
+.search .search-input{
+  width: 140px;
+}
+
+.search .search-btn{
+  min-width: 80px;
+}
+
+.flr{
+  float: right;
+}
