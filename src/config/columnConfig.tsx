@@ -1,6 +1,10 @@
 import dayjs from 'dayjs'
 
-export const userCol = [
+export const userCol: Array<{
+  dataIndex: any;
+  title: any;
+  render?: any;
+}> = [
   {
     dataIndex: 'nickname',
     title: 'Nickname',
@@ -33,7 +37,7 @@ export const userCol = [
   },
 ]
 
-export const columnCol = [
+export const columnCol: any = [
   {
     dataIndex: 'name',
     title: 'Name',
@@ -66,7 +70,7 @@ export const columnCol = [
   },
 ]
 
-export const postCol = [
+export const postCol: any = [
   {
     dataIndex: 'title',
     title: 'Title',

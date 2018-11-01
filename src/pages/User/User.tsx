@@ -1,31 +1,50 @@
 import React from 'react'
 
-import { Button, Col, Input, Row, Table } from 'antd'
-
+import { Button, Input, Modal, Table } from 'antd'
+import Dialog from './Modal'
 import { userCol } from '../../config/columnConfig'
 import { IUser } from '../../config/interface'
 
-export class User extends React.Component<
-  {},
-  {
-    tableData: IUser[]
-    query: any
-  }
-> {
+
+interface IUserState {
+  tableData: IUser[]
+  query: any
+  visible: boolean
+  form: any
+}
+
+export class User extends React.Component<{}, IUserState> {
   constructor(props: any) {
     super(props)
     this.state = {
+      form: {
+        username: {
+          value: ''
+        },
+        nickname: {
+          value: ''
+        },
+        email: {
+          value: ''
+        },
+        status: {
+          value: ''
+        },
+        mobile: {
+          value: ''
+        },
+      },
       query: {
         nickname: '',
         username: ''
       },
-      tableData: []
+      tableData: [],
+      visible: false,
     }
     this.changeUsername = this.changeUsername.bind(this)
   }
 
   public fetch() {
-    window.console.log('fetch')
     this.setState({
       tableData: [
         {
@@ -41,6 +60,47 @@ export class User extends React.Component<
     })
   }
 
+  public opt(type: string, ...data: any[]) {
+    switch (type) {
+      case 'add': {
+        return this.add
+      }
+      case 'del': {
+        return () => {
+          console.log('dellll', data)
+        }
+      }
+      case 'edit': {
+        return () => {
+          this.add()
+          setTimeout(() => {
+            console.log('settt')
+            this.setState({
+              form: {
+                username: {
+                  value: '11',
+                },
+                nickname: {
+                  value: '22',
+                },
+                email: {
+                  value: '33',
+                },
+                status: {
+                  value: '44',
+                },
+                mobile: {
+                  value: '55',
+                },
+              }
+            })
+          }, 2000)
+        }
+      }
+    }
+    return () => null
+  }
+
   public componentDidMount() {
     this.fetch()
   }
@@ -50,31 +110,89 @@ export class User extends React.Component<
   }
 
   public add = () => {
-    window.console.log('aaaaa')
+    this.setState({
+      visible: true
+    })
+  }
+
+  public handleOk = () => {
+    this.setState({
+      visible: false
+    })
+  }
+
+  public cancelModal = () => {
+    this.setState({
+      visible: false
+    })
+  }
+
+  public delRecord = (id: string) => {
+    window.console.log(id)
+  }
+
+  public handleSubmit = () => {
+    window.console.log(1111)
   }
 
   public render() {
+    const { visible, form } = this.state
     return (
       <div className="wrap">
         <div className="search">
-          <Row gutter={16} justify="space-between">
-            <Col span={3}>
-              <Input
-                value={this.state.query.username}
-                placeholder="请输入用户名"
-                onChange={this.changeUsername}
-              />
-            </Col>
-            <Col span={2}>
-              <Button onClick={this.query}>查询</Button>
-            </Col>
-            <Col span={2}>
-              <Button onClick={this.add}>新增</Button>
-            </Col>
-          </Row>
+          <Input
+            value={this.state.query.username}
+            placeholder="请输入用户名"
+            onChange={this.changeUsername}
+            className="search-block search-input"
+          />
+          <Button onClick={this.query} className="search-block search-btn">
+            查询
+          </Button>
+          <Button onClick={this.add} className="search-block search-btn">
+            新增
+          </Button>
+          <Button
+            type="danger"
+            onClick={this.add}
+            icon="delete"
+            className="search-block search-btn flr"
+          >
+            批量删除
+          </Button>
         </div>
+        <Modal
+          title="Title"
+          visible={visible}
+          onOk={this.handleOk}
+          mask={false}
+          // confirmLoading={confirmLoading}
+          onCancel={this.cancelModal}
+        >
+          <Dialog
+            cancel={this.cancelModal}
+            data={form}
+            submit={this.handleSubmit} />
+        </Modal>
         <Table
-          columns={userCol}
+          rowSelection={{}}
+          columns={userCol.concat([
+            {
+              dataIndex: '',
+              render: (text: any, record: any, index: any) => (
+                <div className="opt-btns">
+                  <Button onClick={this.opt('edit', record.id)}>编辑</Button>
+                  <Button
+                    onClick={this.opt('del', record.id)}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    删除
+                  </Button>
+                </div>
+              ),
+              title: 'Operation'
+            }
+          ])}
           dataSource={this.state.tableData}
           rowKey="id"
         />
