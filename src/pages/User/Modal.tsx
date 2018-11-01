@@ -81,7 +81,7 @@ class NormalLoginForm extends React.Component<any, any> {
     return (
       <Form onSubmit={this.handleSubmit} className="login-form">
         {
-          ...config.map(item => (
+          config.map(item => (
             <FormItem>
               {getFieldDecorator(item.name, {
                 rules: [{ required: true, message: 'Please input your username!' }],
