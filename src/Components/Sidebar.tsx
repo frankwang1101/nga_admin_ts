@@ -1,13 +1,12 @@
-import * as React from 'react'
+import React from 'react'
 
 import { Icon, Menu } from 'antd'
 import { Link } from 'react-router-dom'
 
 
-class Sidebar extends React.Component {
-  public props: {
-    navs: object[],
-  }
+class Sidebar extends React.Component<{
+  navs: object[];
+}> {
 
   public menuClick(e: any) {
     window.console.log(e, this.context);

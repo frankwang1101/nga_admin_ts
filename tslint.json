@@ -14,5 +14,7 @@
       "error",
       "warn"
     ],
+    "ordered-imports": false,
+    "interface-over-type-literal": false
   }
 }

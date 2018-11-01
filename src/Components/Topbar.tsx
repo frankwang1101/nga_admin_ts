@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import './Topbar.css'
 
 import { Button, Row } from 'antd';
@@ -8,12 +8,7 @@ export interface ITopbarProps {
   quit: () => void
 }
 
-class Topbar extends React.Component {
-
-  public props: {
-    name: string,
-    quit: () => void,
-  }
+class Topbar extends React.Component<ITopbarProps> {
 
   public render() {
     return (
