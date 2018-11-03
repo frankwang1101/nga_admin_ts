@@ -6,8 +6,8 @@ export const userCol: Array<{
   render?: any;
 }> = [
   {
-    dataIndex: 'nickname',
-    title: 'Nickname',
+    dataIndex: 'uid',
+    title: 'uid',
   },
   {
     dataIndex: 'username',
@@ -26,7 +26,11 @@ export const userCol: Array<{
     title: 'Status'
   },
   {
-    dataIndex: 'createTime',
+    dataIndex: 'role',
+    title: 'Role'
+  },
+  {
+    dataIndex: 'createtime',
     render: (date: Date | string | number | undefined) => dayjs(date).format('YYYY-MM-DD'),
     title: 'CreateTime',
   },

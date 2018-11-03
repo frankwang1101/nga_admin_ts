@@ -1,14 +1,23 @@
 import React from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
+import { connect } from 'react-redux';
 import './style/Login.scss';
+import { RouteComponentProps } from 'react-router';
+import { login } from '../../api/user';
 
 const FormItem = Form.Item;
 
 export class NormalLoginForm extends React.Component<
-  FormComponentProps,
+  FormComponentProps & {
+    setInfo: (s: BaseState) => any;
+  } & RouteComponentProps,
   React.ComponentState
 > {
+  constructor(props: any) {
+    super(props);
+    console.log(props);
+  }
   public render() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -18,9 +27,7 @@ export class NormalLoginForm extends React.Component<
           <Form onSubmit={this.handleSubmit} className="login-form">
             <FormItem>
               {getFieldDecorator('userName', {
-                rules: [
-                  { required: true, message: '请输入用户名!' },
-                ],
+                rules: [{ required: true, message: '请输入用户名!' }],
               })(
                 <Input
                   prefix={
@@ -32,9 +39,7 @@ export class NormalLoginForm extends React.Component<
             </FormItem>
             <FormItem>
               {getFieldDecorator('password', {
-                rules: [
-                  { required: true, message: '请输入密码!' },
-                ],
+                rules: [{ required: true, message: '请输入密码!' }],
               })(
                 <Input
                   prefix={
@@ -70,12 +75,33 @@ export class NormalLoginForm extends React.Component<
 
   private handleSubmit = (e: React.FormEvent<any>) => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        try {
+          const user = await login({
+            username: values.userName,
+            pwd: values.password
+          })
+          this.props.setInfo({
+            user
+          });
+          this.props.history.push('/');
+        } catch (e) {
+          console.log(e)
+        }
       }
     });
   };
 }
 const WrappedNormalLoginForm = Form.create()(NormalLoginForm);
-export default WrappedNormalLoginForm;
+const mapDispatchToProps = (dispatch: any) => ({
+  setInfo: (info: BaseState) =>
+    dispatch({
+      type: 'login',
+      state: info,
+    }),
+});
+export default connect(
+  null,
+  mapDispatchToProps,
+)(WrappedNormalLoginForm);

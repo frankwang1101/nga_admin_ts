@@ -19,13 +19,7 @@ export default class Api {
     this._INS = axios.create({
       ...opts,
       baseURL: base,
-      timeout,
-      transformResponse: (data: any) => {
-        if (this.validRes) {
-          return this.validRes(data);
-        }
-        return data;
-      },
+      timeout
     });
   }
 
@@ -69,10 +63,16 @@ export default class Api {
     const config = {
       ...opt,
     };
-    if (opt.valid) {
-      config.transformResponse = opt.valid;
-    }
+    // if (opt.valid) {
+    //   config.transformResponse = opt.valid;
+    // }
     delete opt.valid;
-    return (this._INS as any)[type](url, config);
+    config.method = type
+    config.url = url
+    console.log(config);
+    const res = (this._INS as any)(config);
+    if (opt.valid) return res.then(opt.valid)
+    if (this.validRes) return res.then(this.validRes)
+    return res
   }
 }

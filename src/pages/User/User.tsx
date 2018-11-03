@@ -1,142 +1,119 @@
-import React from 'react'
+import React from 'react';
 
-import { Button, Input, Modal, Table } from 'antd'
-import Dialog from './Modal'
-import { userCol } from '../../config/columnConfig'
-import { IUser } from '../../config/interface'
-
+import { Button, Input, Modal, Table } from 'antd';
+import Dialog from './Modal';
+import { userCol } from '../../config/columnConfig';
+import { IUser } from '../../config/interface';
+import { getUserList } from '../../api/user';
 
 interface IUserState {
-  tableData: IUser[]
-  query: any
-  visible: boolean
-  form: any
+  tableData: IUser[];
+  query: any;
+  visible: boolean;
+  form: any;
 }
 
 export class User extends React.Component<{}, IUserState> {
   constructor(props: any) {
-    super(props)
+    super(props);
     this.state = {
       form: {
         username: {
-          value: ''
+          value: '',
         },
         nickname: {
-          value: ''
+          value: '',
         },
         email: {
-          value: ''
+          value: '',
         },
         status: {
-          value: ''
+          value: '',
         },
         mobile: {
-          value: ''
+          value: '',
         },
       },
       query: {
         nickname: '',
-        username: ''
+        username: '',
       },
       tableData: [],
       visible: false,
-    }
-    this.changeUsername = this.changeUsername.bind(this)
+    };
+    this.changeUsername = this.changeUsername.bind(this);
   }
 
-  public fetch() {
-    this.setState({
-      tableData: [
-        {
-          createTime: 1532931684373,
-          email: 'aaa@bbb.ccc',
-          id: '1231',
-          mobile: 13845312354,
-          nickname: 'aaa',
-          status: 2,
-          username: 'bbb'
-        }
-      ]
-    })
+  public async fetch() {
+    try {
+      const { username } = this.state.query;
+      const list = await getUserList({
+        username,
+      });
+      this.setState({
+        tableData: list,
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   public opt(type: string, ...data: any[]) {
     switch (type) {
       case 'add': {
-        return this.add
+        return () => {
+          this.setState({
+            visible: true,
+          });
+        };
       }
       case 'del': {
         return () => {
-          console.log('dellll', data)
-        }
+          console.log('dellll', data);
+        };
       }
       case 'edit': {
         return () => {
-          this.add()
-          setTimeout(() => {
-            console.log('settt')
-            this.setState({
-              form: {
-                username: {
-                  value: '11',
-                },
-                nickname: {
-                  value: '22',
-                },
-                email: {
-                  value: '33',
-                },
-                status: {
-                  value: '44',
-                },
-                mobile: {
-                  value: '55',
-                },
-              }
-            })
-          }, 2000)
-        }
+          this.setState({
+            visible: true,
+            form: {
+              ...data[0],
+            },
+          });
+        };
       }
     }
-    return () => null
+    return () => null;
   }
 
   public componentDidMount() {
-    this.fetch()
+    this.fetch();
   }
 
   public query = () => {
-    window.console.log('query..', this.state.query)
-  }
-
-  public add = () => {
-    this.setState({
-      visible: true
-    })
-  }
-
-  public handleOk = () => {
-    this.setState({
-      visible: false
-    })
-  }
+    this.fetch();
+  };
 
   public cancelModal = () => {
     this.setState({
-      visible: false
-    })
-  }
+      visible: false,
+    });
+  };
 
   public delRecord = (id: string) => {
-    window.console.log(id)
+    window.console.log(id);
+  };
+
+  public batchDel = () => {
+    console.log('batch');
   }
 
-  public handleSubmit = () => {
-    window.console.log(1111)
-  }
+  public handleSubmit = (data: any) => {
+    console.log('receive submit data', data);
+  };
 
   public render() {
-    const { visible, form } = this.state
+    const { visible, form } = this.state;
     return (
       <div className="wrap">
         <div className="search">
@@ -149,12 +126,12 @@ export class User extends React.Component<{}, IUserState> {
           <Button onClick={this.query} className="search-block search-btn">
             查询
           </Button>
-          <Button onClick={this.add} className="search-block search-btn">
+          <Button onClick={this.opt('add')} className="search-block search-btn">
             新增
           </Button>
           <Button
             type="danger"
-            onClick={this.add}
+            onClick={this.batchDel}
             icon="delete"
             className="search-block search-btn flr"
           >
@@ -164,7 +141,7 @@ export class User extends React.Component<{}, IUserState> {
         <Modal
           title="Title"
           visible={visible}
-          onOk={this.handleOk}
+          onOk={this.cancelModal}
           mask={false}
           // confirmLoading={confirmLoading}
           onCancel={this.cancelModal}
@@ -172,7 +149,8 @@ export class User extends React.Component<{}, IUserState> {
           <Dialog
             cancel={this.cancelModal}
             data={form}
-            submit={this.handleSubmit} />
+            submit={this.handleSubmit}
+          />
         </Modal>
         <Table
           rowSelection={{}}
@@ -181,7 +159,7 @@ export class User extends React.Component<{}, IUserState> {
               dataIndex: '',
               render: (text: any, record: any, index: any) => (
                 <div className="opt-btns">
-                  <Button onClick={this.opt('edit', record.id)}>编辑</Button>
+                  <Button onClick={this.opt('edit', record)}>编辑</Button>
                   <Button
                     onClick={this.opt('del', record.id)}
                     style={{ marginLeft: '10px' }}
@@ -190,23 +168,23 @@ export class User extends React.Component<{}, IUserState> {
                   </Button>
                 </div>
               ),
-              title: 'Operation'
-            }
+              title: 'Operation',
+            },
           ])}
           dataSource={this.state.tableData}
-          rowKey="id"
+          rowKey="uid"
         />
       </div>
-    )
+    );
   }
 
   private changeUsername(e: any) {
     this.setState({
       query: Object.assign(this.state.query, {
-        username: e.target.value
-      })
-    })
+        username: e.target.value,
+      }),
+    });
   }
 }
 
-export default User
+export default User;

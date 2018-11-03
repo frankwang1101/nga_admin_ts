@@ -7,12 +7,12 @@ import Topbar from '../Components/Topbar';
 import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { routes } from '../router/router';
-// import ColumnGroup from 'antd/lib/table/ColumnGroup';
+import { connect } from 'react-redux';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 class App extends React.Component<
-  RouteComponentProps,
+  RouteComponentProps & BaseState,
   {
     navs: object[];
   }
@@ -50,6 +50,7 @@ class App extends React.Component<
   }
 
   public render() {
+    const { user } = this.props
     return (
       <Layout>
         <Sider
@@ -63,16 +64,15 @@ class App extends React.Component<
           //   console.log(collapsed, type)
           // }}
         >
-          <div className="logo" />
           <Sidebar navs={this.state.navs} />
         </Sider>
         <Layout>
           <Header style={{ background: '#fff', padding: 0 }}>
-            <Topbar name={'hello'} quit={this.quit} />
+            <Topbar name={'hello! ' + user.username} quit={this.quit} />
           </Header>
           <Content style={{ margin: '24px 16px 0' }}>
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-              {routes}
+              {routes()}
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>Nga manage demo</Footer>
@@ -82,4 +82,8 @@ class App extends React.Component<
   }
 }
 
-export default withRouter(App);
+const mapStateToProps = (state: BaseState) => ({
+  ...state
+})
+
+export default connect(mapStateToProps)(withRouter(App));

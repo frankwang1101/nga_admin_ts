@@ -1,11 +1,13 @@
-import React from 'react'
+import React from 'react';
 import { Homepage, User, Post, Column } from './source';
+import AuthorizeCopm from '../Components/AuthorizeComp';
+import { Switch } from 'react-router-dom';
 
-import { Route } from 'react-router-dom'
-
-export const routes = [
-  <Route path="/" exact={true} component={Homepage} key="/" />,
-  <Route path="/user" component={User} key="user" />,
-  <Route path="/post" component={Post} key="post" />,
-  <Route path="/column" component={Column} key="column" />
-]
+export const routes: any = () => (
+  <Switch>
+    <AuthorizeCopm path="/" exact={true} component={Homepage} key="/" />,
+    <AuthorizeCopm path="/user" component={User} key="user" />,
+    <AuthorizeCopm path="/post" component={Post} key="post" />,
+    <AuthorizeCopm path="/column" component={Column} key="column" />
+  </Switch>
+);
